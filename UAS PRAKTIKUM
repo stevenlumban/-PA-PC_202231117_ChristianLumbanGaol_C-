@@ -1,0 +1,64 @@
+import cv2
+import numpy as np
+from matplotlib import pyplot as plt
+
+# Membaca gambar
+image_path = '/mnt/data/Gambar WhatsApp 2024-07-13 pukul 17.11.45_b05491ca.jpg'
+img = cv2.imread(image_path)
+
+# Fungsi untuk menampilkan gambar menggunakan matplotlib
+def show_image(title, img):
+    img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+    plt.imshow(img_rgb)
+    plt.title(title)
+    plt.axis('off')
+    plt.show()
+
+# 1. Menampilkan citra asli
+show_image('Citra Asli', img)
+
+# 2. Rotasi
+def rotate_image(img, angle):
+    (h, w) = img.shape[:2]
+    center = (w / 2, h / 2)
+    M = cv2.getRotationMatrix2D(center, angle, 1.0)
+    rotated = cv2.warpAffine(img, M, (w, h))
+    return rotated
+
+rotated_img = rotate_image(img, 45)
+show_image('Rotated', rotated_img)
+
+# 3. Resize
+def resize_image(img, scale_factor):
+    width = int(img.shape[1] * scale_factor)
+    height = int(img.shape[0] * scale_factor)
+    resized = cv2.resize(img, (width, height), interpolation=cv2.INTER_LINEAR)
+    return resized
+
+resized_img = resize_image(img, 0.5)
+show_image('Resized', resized_img)
+
+# 4. Crop
+def crop_image(img, start_x, start_y, width, height):
+    cropped = img[start_y:start_y+height, start_x:start_x+width]
+    return cropped
+
+cropped_img = crop_image(img, 50, 50, 200, 200)
+show_image('Cropped', cropped_img)
+
+# 5. Flip
+def flip_image(img, flip_code):
+    flipped = cv2.flip(img, flip_code)
+    return flipped
+
+flipped_img = flip_image(img, 1)  # 0: flip vertically, 1: flip horizontally, -1: flip both axes
+show_image('Flipped', flipped_img)
+
+# 6. Translasi
+def translate_image(img, x, y):
+    M = np.float32([[1, 0, x], [0, 1, y]])
+    translated = cv2.warpAffine(img, M, (img.shape[1], img.shape[0]))
+    return translated
+
+translated_img = translate_image(img, 100, 50)
+show_image('Translated', translated_img)
